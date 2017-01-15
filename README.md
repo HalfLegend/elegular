@@ -5,7 +5,9 @@ The main purpose is to create a native angular app using electron with only a fe
 The window itself is created by Electron, while the content of the window can be written in Angular.  
 The framework is written in Typescript, and can be compiled into es6.  
 
-Sample path:  https://github.com/HalfLegend/elegular-sample
+Angular means Angular2, not AngularJS. Source: https://github.com/angular/angular
+
+Sample path:  https://github.com/HalfLegend/electron-angular-sample
 
 ### Quick Start
 
@@ -95,7 +97,7 @@ Elegular是把Electron和Angular结合到一起的框架。其窗口是用Electr
 
 此工程使用Typescript编写，并且可以编译为es6版本的javascript.  
 
-样例： https://github.com/HalfLegend/elegular-sample
+样例： https://github.com/HalfLegend/electron-angular-sample
 
 ### 快速上手
 
