@@ -1,0 +1,9 @@
+# Dependency directories
+node_modules
+
+# IntelliJ and WebStorm
+.idea
+
+# Typecript Output
+*.js
+*.js.map

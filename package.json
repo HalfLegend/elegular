@@ -1,0 +1,33 @@
+{
+  "name": "elegular",
+  "version": "0.0.8",
+  "description": "An angular based electron app framework",
+  "main": "index.js",
+  "scripts": {},
+  "author": "HalfLegend",
+  "license": "MIT",
+  "repository": "https://github.com/HalfLegend/Myth.ElectronAngular",
+  "dependencies": {
+    "@angular/common": "^4.0.0-beta.3",
+    "@angular/compiler": "^4.0.0-beta.3",
+    "@angular/core": "^4.0.0-beta.3",
+    "@angular/platform-browser": "^4.0.0-beta.3",
+    "@angular/platform-browser-dynamic": "^4.0.0-beta.3",
+    "@angular/platform-server": "^4.0.0-beta.3",
+    "@types/electron": "^1.4.31",
+    "@types/node": "^7.0.0",
+    "electron": "^1.4.14",
+    "lodash": "^4.16.1",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "^5.0.1",
+    "systemjs": "^0.19.41",
+    "zone.js": "^0.7.1"
+  },
+  "devDependencies": {
+    "@types/systemjs": "^0.19.33",
+    "typescript": "^2.1.5"
+  },
+  "optionalDependencies": {
+    "@angular/router": "^4.0.0-beta.3"
+  }
+}
