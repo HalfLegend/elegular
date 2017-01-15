@@ -1,12 +1,12 @@
 {
-  "name": "elegular",
+  "name": "electron-angular",
   "version": "0.0.8",
-  "description": "An angular based electron app framework",
+  "description": "The easiest way to use Angular in Electron.",
   "main": "index.js",
   "scripts": {},
   "author": "HalfLegend",
   "license": "MIT",
-  "repository": "https://github.com/HalfLegend/Myth.ElectronAngular",
+  "repository": "https://github.com/HalfLegend/electron-angular",
   "dependencies": {
     "@angular/common": "^4.0.0-beta.3",
     "@angular/compiler": "^4.0.0-beta.3",
