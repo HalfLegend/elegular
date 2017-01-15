@@ -1,5 +1,5 @@
-# Elegular
->  **electron-angular** &nbsp; &nbsp;The easiest way to use Angular in Electron. 
+# electron-angular
+>  **Elegular** &nbsp; &nbsp;The easiest way to use Angular in Electron. 
 
 The main purpose is to create a native angular app using electron with only a few steps.  
 The window itself is created by Electron, while the content of the window can be written in Angular.  
