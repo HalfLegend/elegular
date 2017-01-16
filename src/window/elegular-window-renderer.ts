@@ -1,6 +1,6 @@
 ///<reference path="../../node_modules/reflect-metadata/typings.d.ts"/>
 
-import * as electron from "electron";
+// import * as electron from "electron";
 import * as _ from "lodash";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 import {AngularLoadContext} from "./angular-load-context.class";
@@ -162,7 +162,7 @@ class ElegularWindowRenderer {
             '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
             '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
             'elegular/client': 'npm:elegular/client.js',
-            'electron': 'npm:elegular/client.js',
+            'electron': 'npm:elegular/src/client/electron-static.class.js',
             // other libraries
             'rxjs':                      'npm:rxjs',
         },
