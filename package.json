@@ -1,6 +1,6 @@
 {
   "name": "elegular",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "description": "The easiest way to use Angular in Electron.",
   "main": "index.js",
   "scripts": {},
@@ -8,27 +8,26 @@
   "license": "MIT",
   "repository": "https://github.com/HalfLegend/electron-angular",
   "dependencies": {
-    "@angular/common": "^4.0.0-beta.3",
-    "@angular/compiler": "^4.0.0-beta.3",
+    "@angular/common": "^4.0.0-beta.6",
+    "@angular/compiler": "^4.0.0-beta.6",
     "@angular/core": "^4.0.0-beta.3",
-    "@angular/platform-browser": "^4.0.0-beta.3",
-    "@angular/platform-browser-dynamic": "^4.0.0-beta.3",
-    "@angular/platform-server": "^4.0.0-beta.3",
+    "@angular/platform-browser": "^4.0.0-beta.6",
+    "@angular/platform-browser-dynamic": "^4.0.0-beta.6",
+    "@angular/platform-server": "^4.0.0-beta.6",
     "@types/electron": "^1.4.31",
-    "@types/node": "^7.0.0",
-    "electron": "^1.4.14",
-    "lodash": "^4.16.1",
-    "reflect-metadata": "^0.1.8",
-    "rxjs": "^5.0.1",
-
-    "systemjs": "^0.19.41",
-    "zone.js": "^0.7.1"
+    "@types/node": "^7.0.5",
+    "electron": "^1.4.15",
+    "lodash": "^4.17.4",
+    "reflect-metadata": "^0.1.9",
+    "rxjs": "^5.1.0",
+    "systemjs": "^0.19.46",
+    "zone.js": "^0.7.6"
   },
   "devDependencies": {
     "@types/systemjs": "^0.19.33",
     "typescript": "^2.1.5"
   },
   "optionalDependencies": {
-    "@angular/router": "^4.0.0-beta.3"
+    "@angular/router": "^4.0.0-beta.6"
   }
 }
