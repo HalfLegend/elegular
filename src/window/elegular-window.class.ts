@@ -13,6 +13,7 @@ import NativeImage = Electron.NativeImage;
 import LoadURLOptions = Electron.LoadURLOptions;
 import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
+import {max} from "rxjs/operator/max";
 
 export class ElegularWindow {
     public browserWindow: BrowserWindow;
@@ -23,7 +24,7 @@ export class ElegularWindow {
     constructor(angularWindowModuleConfig: ElegularWindowConfig) {
         let BrowserWindowConstructor = electron.BrowserWindow;
         this.browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
-        let dirPath = __dirname;
+        let dirPath = ElegularWindow.analyzeDirPath();
 
         this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
 
@@ -56,6 +57,26 @@ export class ElegularWindow {
             this.browserWindow.webContents.openDevTools();
         }
         ElegularWindowManager.registerWindow(this);
+    }
+
+    private static analyzeDirPath():string{
+        let dirPath = __dirname;
+
+        let index = Math.max(dirPath.lastIndexOf("elegular"), dirPath.lastIndexOf("electron-angular"));
+        let dirRelativePath = dirPath.substring(index);
+        dirPath = dirPath.replace("\\", "/");
+
+        let pattern = /\.d+\.d+\.d+@(elegular|electron-angular)/ + "(?=/" + dirRelativePath + ")";
+        console.log(dirPath);
+        console.log(index);
+        console.log(dirRelativePath);
+        console.log(pattern);
+        if (dirPath.match(pattern))
+        {
+            console.log("abc");
+        }
+
+        return dirPath;
     }
 
     public get windowEventManager() {

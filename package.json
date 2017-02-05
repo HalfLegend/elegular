@@ -1,6 +1,6 @@
 {
-  "name": "electron-angular",
-  "version": "0.0.8",
+  "name": "elegular",
+  "version": "0.0.9",
   "description": "The easiest way to use Angular in Electron.",
   "main": "index.js",
   "scripts": {},
@@ -20,6 +20,7 @@
     "lodash": "^4.16.1",
     "reflect-metadata": "^0.1.8",
     "rxjs": "^5.0.1",
+
     "systemjs": "^0.19.41",
     "zone.js": "^0.7.1"
   },

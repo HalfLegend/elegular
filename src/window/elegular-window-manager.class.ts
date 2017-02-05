@@ -8,12 +8,18 @@ import IpcMainEvent = Electron.IpcMainEvent;
 export class ElegularWindowManager {
     public static initialize() {
         let ipcMain: IpcMain = election.ipcMain;
-        let callback = (event: IpcMainEvent, windowIndex: number, functionName: string, ...args) => {
+        let callbackSync = (event: IpcMainEvent, windowIndex: number, functionName: string, ...args) => {
             let win = ElegularWindowManager.getWindowByIndex(windowIndex);
             event.returnValue = win[functionName](...args);
         };
-        ipcMain.on("##elegular-internal-window-function-async",callback);
-        ipcMain.on("##elegular-internal-window-function-sync", callback);
+
+        ipcMain.on("##elegular-internal-window-function-sync", callbackSync);
+        let callbackAsync = (event: IpcMainEvent, windowIndex: number, functionName: string, messageId: number, ...args) => {
+            let win = ElegularWindowManager.getWindowByIndex(windowIndex);
+            let result = win[functionName](...args);
+            event.sender.send("##elegular-internal-window-function-async-reply", functionName, messageId, result);
+        };
+        ipcMain.on("##elegular-internal-window-function-async",callbackAsync);
     }
 
     private static _windowMap: Map<BrowserWindow, ElegularWindow> = new Map<BrowserWindow, ElegularWindow>();

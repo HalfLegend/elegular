@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
-//import electron = require("electron");
-//import * as electron from "electron";
+
 import Size = Electron.Size;
 import Rectangle = Electron.Rectangle;
 import NativeImage = Electron.NativeImage;
@@ -9,7 +8,10 @@ import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
 import BrowserWindow = Electron.BrowserWindow;
 import Point = Electron.Point;
-// import electron = require("electron");
+import IpcRendererEvent = Electron.IpcRendererEvent;
+import {isNumber} from "util";
+
+declare type PromiseResolveFunctionType = (value?: any | PromiseLike<any>) => void;
 
 @Injectable()
 export class ElegularWindowRef {
@@ -17,6 +19,43 @@ export class ElegularWindowRef {
 
     constructor(private _windowId: number) {
         this._ipcRenderer = electron.ipcRenderer;
+
+        this._ipcRenderer.on("##elegular-internal-window-function-async-reply", (event: IpcRendererEvent, [functionName, messageId, result])=>{
+            let messageMap = this._asyncFunctionMessageMap.get(functionName);
+            if (messageMap){
+                let resolve: PromiseResolveFunctionType  = messageMap.get(messageId);
+                if (resolve){
+                    resolve(result);
+                    messageMap.delete(messageId);
+                }
+                if (messageMap.size == 0)
+                {
+                    this._asyncFunctionMessageMap.delete(functionName);
+                }
+            }
+        });
+    }
+
+    private _asyncFunctionMessageMap : Map<string, Map<number, PromiseResolveFunctionType>> =
+        new Map<string, Map<number, PromiseResolveFunctionType>>();
+
+    private _maxAsyncMessageId: number = 0;
+    private _internalFunctionAsync(functionName: string, ...args: Array<any>): Promise<any> {
+        let messageId = ++this._maxAsyncMessageId;
+        this._ipcRenderer.send("##elegular-internal-window-function-async", this._windowId, messageId, functionName, ...args);
+        return new Promise<any>(resolve => {
+            let messageMap = this._asyncFunctionMessageMap.get(functionName);
+            if (!messageMap) {
+                messageMap = new Map<number, PromiseResolveFunctionType>();
+                this._asyncFunctionMessageMap.set(functionName, messageMap);
+            }
+            messageMap.set(messageId, resolve);
+        });
+    }
+
+
+    private _internalFunctionSync(functionName: string,...args: Array<any>): any {
+        return this._ipcRenderer.sendSync("##elegular-internal-window-function-sync", this._windowId, functionName, ...args);
     }
 
     /**
@@ -742,14 +781,5 @@ export class ElegularWindowRef {
      */
     public getChildWindows(): BrowserWindow[] {
         return this._internalFunctionSync("getChildWindows");
-    }
-
-
-    private _internalFunctionAsync(functionName: string, ...args: Array<any>): void {
-        this._ipcRenderer.send("##elegular-internal-window-function-async", this._windowId, functionName, ...args);
-    }
-
-    private _internalFunctionSync(functionName: string, ...args: Array<any>): any {
-        return this._ipcRenderer.sendSync("##elegular-internal-window-function-sync", this._windowId, functionName, ...args);
     }
 }
