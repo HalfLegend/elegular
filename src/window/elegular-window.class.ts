@@ -13,6 +13,7 @@ import NativeImage = Electron.NativeImage;
 import LoadURLOptions = Electron.LoadURLOptions;
 import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
+import * as Lazy from "lazy.js";
 import {max} from "rxjs/operator/max";
 
 export class ElegularWindow {
@@ -61,21 +62,28 @@ export class ElegularWindow {
 
     private static analyzeDirPath():string{
         let dirPath = __dirname;
-
-        let index = Math.max(dirPath.lastIndexOf("elegular"), dirPath.lastIndexOf("electron-angular"));
-        let dirRelativePath = dirPath.substring(index);
-        dirPath = dirPath.replace("\\", "/");
-
-        let pattern = /\.d+\.d+\.d+@(elegular|electron-angular)/ + "(?=/" + dirRelativePath + ")";
         console.log(dirPath);
-        console.log(index);
-        console.log(dirRelativePath);
-        console.log(pattern);
-        if (dirPath.match(pattern))
+        //let index = Math.max(dirPath.lastIndexOf("elegular"), dirPath.lastIndexOf("electron-angular"));
+        let nodeModules = "node_modules";
+        let index = dirPath.lastIndexOf(nodeModules);
+        if (index != -1)
         {
-            console.log("abc");
+            index = index + nodeModules.length + 1;
+            let dirRelativePath = dirPath.substring(index);
+            let prefixPath = dirPath.substring(0, index);
+            console.log(dirRelativePath);
+            console.log(prefixPath);
+            let matcher = /^(\.\d+@){3}(?=elegular|electron-angular)/.exec(dirRelativePath);
+            if (matcher)
+            {
+                let version = matcher[0];
+                console.log(version);
+                dirRelativePath = dirRelativePath.substring(version.length);
+                console.log(dirRelativePath);
+                dirPath = path.join(prefixPath, dirRelativePath);
+            }
         }
-
+        console.log(dirPath);
         return dirPath;
     }
 
