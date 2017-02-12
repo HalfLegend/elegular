@@ -9,5 +9,4 @@ import {ElegularService} from "./elegular-service.service";
     ]
 })
 export class ElegularModule{
-
 }

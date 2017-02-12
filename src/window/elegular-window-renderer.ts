@@ -22,7 +22,7 @@ class ElegularWindowRenderer {
                 baseNode.href = this._angularLoadContext.angularModulePath;
                 window.document.head.appendChild(baseNode);
 
-                this.initializeSystemJS();
+                this.initializeSystemJS(angularLoadContext.elegularWindowConfig.systemJsConfig);
 
                 let angularPlatform = await this.loadFileAsync("@angular/platform-browser-dynamic");
 
@@ -94,12 +94,12 @@ class ElegularWindowRenderer {
         return false;
     }
 
-    private initializeSystemJS()
+    private initializeSystemJS(modularSystemJsConfig : Config)
     {
         if (this.isUseSystemJS())
         {
             console.log("Using SystemJS.");
-            SystemJS.config(this.systemJsConfig);
+            SystemJS.config(this.combineSystemJsConfig(modularSystemJsConfig));
         }
         else
         {
@@ -144,7 +144,23 @@ class ElegularWindowRenderer {
         }
     }
 
-    private systemJsConfig: Config = {
+    private combineSystemJsConfig(modularSystemJsConfig : Config): Config{
+        let config = this._defaultSystemJsConfig;
+        if (modularSystemJsConfig && modularSystemJsConfig.map)
+        {
+            let modularMap = modularSystemJsConfig.map;
+            for(let key in modularMap)
+            {
+                if(modularMap.hasOwnProperty(key)) {
+                    config.map[key] = modularMap[key];
+                }
+            }
+        }
+        return config;
+    }
+
+    private _defaultSystemJsConfig: Config = {
+        baseURL: '../../../',
         defaultJSExtensions:true,
         paths: {
             // paths serve as alias

@@ -5,21 +5,49 @@ import BrowserWindow = Electron.BrowserWindow;
 import {WindowId, ElegularWindowConfig} from "../angular-window-module-config";
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
+
 export class ElegularWindowManager {
+    private static _internalGlobalWindowFunctionMap: Map<string, Function> = new Map<string, Function>();
+
     public static initialize() {
         let ipcMain: IpcMain = election.ipcMain;
         let callbackSync = (event: IpcMainEvent, windowIndex: number, functionName: string, ...args) => {
-            let win = ElegularWindowManager.getWindowByIndex(windowIndex);
-            event.returnValue = win[functionName](...args);
+            event.returnValue = ElegularWindowManager.callInternalWindowFunction(windowIndex, functionName, ...args);
         };
 
         ipcMain.on("##elegular-internal-window-function-sync", callbackSync);
         let callbackAsync = (event: IpcMainEvent, windowIndex: number, functionName: string, messageId: number, ...args) => {
-            let win = ElegularWindowManager.getWindowByIndex(windowIndex);
-            let result = win[functionName](...args);
-            event.sender.send("##elegular-internal-window-function-async-reply", functionName, messageId, result);
+            let result = ElegularWindowManager.callInternalWindowFunction(windowIndex, functionName, ...args);
+
+            if (functionName != "close")
+            {
+                event.sender.send("##elegular-internal-window-function-async-reply", functionName, messageId, result);
+            }
         };
         ipcMain.on("##elegular-internal-window-function-async",callbackAsync);
+
+        ElegularWindowManager._internalGlobalWindowFunctionMap.set("createWindow", (configOrId: ElegularWindowConfig|WindowId)=>{
+            let elegularWindow = ElegularWindowManager.createWindow(configOrId);
+            return elegularWindow.id;
+        });
+    }
+
+    private static callInternalWindowFunction(windowIndex: number, functionName: string, ...args): any{
+
+        let f: Function = null;
+        if (windowIndex != null)
+        {
+            let win = ElegularWindowManager.getWindowByIndex(windowIndex);
+            if (win != null)
+            {
+                f = win[functionName];
+            }
+        }
+        if (!f)
+        {
+            f = ElegularWindowManager._internalGlobalWindowFunctionMap.get(functionName);
+        }
+        return f(...args);
     }
 
     private static _windowMap: Map<BrowserWindow, ElegularWindow> = new Map<BrowserWindow, ElegularWindow>();
