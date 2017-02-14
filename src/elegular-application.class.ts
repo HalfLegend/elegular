@@ -1,15 +1,24 @@
 import BrowserWindow = Electron.BrowserWindow;
 import {ElegularAppEventManager} from "./event/app-event/elegular-app-event-manager.class";
-import {WindowId, ElegularWindowConfig} from "./angular-window-module-config";
+import {WindowId, ElegularWindowOptions, GlobalElegularOptions} from "./angular-options";
 import {ElegularWindow} from "./window/elegular-window.class";
 import {ElegularWindowManager} from "./window/elegular-window-manager.class";
 import * as electron from "electron";
 export class ElegularApplication {
+    private static _globalElegularOptions: GlobalElegularOptions;
+    public static get globalElegularOptions(): GlobalElegularOptions {
+        return ElegularApplication._globalElegularOptions;
+    }
+
+    public static configureGlobal(globalElegularOptions: GlobalElegularOptions) {
+        ElegularApplication._globalElegularOptions = globalElegularOptions;
+    }
+
     /**
-     * Register ElegularWindowConfig
+     * Register ElegularWindowOptions
      * @param angularWindowModuleConfigList
      */
-    public static registerAngularWindowModuleConfig(...angularWindowModuleConfigList: ElegularWindowConfig[]):void {
+    public static registerAngularWindowModuleConfig(...angularWindowModuleConfigList: ElegularWindowOptions[]): void {
         ElegularWindowManager.registerAngularWindowModuleConfig(...angularWindowModuleConfigList);
     }
 
@@ -25,15 +34,15 @@ export class ElegularApplication {
         return ElegularAppEventManager;
     }
 
-    public static createWindow(configOrId: ElegularWindowConfig|WindowId): ElegularWindow{
+    public static createWindow(configOrId: ElegularWindowOptions | WindowId): ElegularWindow {
         return ElegularWindowManager.createWindow(configOrId);
     }
 
-    public static exit(exitCode: number): void{
+    public static exit(exitCode: number): void {
         electron.app.exit(exitCode);
     }
 
-    public static quit(): void{
+    public static quit(): void {
         electron.app.quit();
     }
 }

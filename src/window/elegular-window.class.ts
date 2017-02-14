@@ -4,7 +4,7 @@ import BrowserWindow = Electron.BrowserWindow;
 import * as fs from "fs";
 import * as path from "path";
 import {AngularLoadContext} from "./angular-load-context.class";
-import {ElegularWindowConfig} from "../angular-window-module-config";
+import {ElegularWindowOptions} from "../angular-options";
 import {ElegularWindowManager} from "./elegular-window-manager.class";
 import {ElegularWindowEventManager} from "../event/window-event/elegular-window-event-manager.class";
 import Size = Electron.Size;
@@ -23,23 +23,36 @@ export class ElegularWindow {
         return this.browserWindow.id;
     }
 
-    constructor(angularWindowModuleConfig: ElegularWindowConfig) {
+    constructor(angularWindowModuleConfig: ElegularWindowOptions) {
         let BrowserWindowConstructor = electron.BrowserWindow;
         this.browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
         let dirPath = ElegularWindow.analyzeDirPath();
 
         this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
 
-        this.browserWindow.webContents.on("did-finish-load", () => {
+        this.browserWindow.webContents.on("did-finish-load",async () => {
             let nodeModuleFolderPath = ElegularWindow.findNodeModuleFolder(dirPath);
             let relativePath = path.relative(dirPath, nodeModuleFolderPath);
 
             let nodeModulePaths = [];
             nodeModulePaths.push(path.join(relativePath, "zone.js", "dist", "zone.js"));
             nodeModulePaths.push(path.join(relativePath, "reflect-metadata", "Reflect.js"));
-            if (angularWindowModuleConfig.isUseSystemJS) {
 
-                nodeModulePaths.push(path.join(relativePath, "systemjs", "dist", "system.src.js"));
+            let systemJsConfig = angularWindowModuleConfig.systemJsConfig;
+            // isUseSystemJS is true if it is not configured
+            if (!systemJsConfig || systemJsConfig.isUseSystemJS !== false) {
+                let systemJsPath = path.join(relativePath, "systemjs", "dist", "system.src.js");
+                let currentRelativePath = path.relative(process.cwd(), __dirname);
+                let pa = path.join(currentRelativePath,systemJsPath);
+
+                let promise = new Promise<boolean>(resolve =>{
+                    fs.exists(pa, (isExisted => resolve(isExisted)) );
+                });
+                await promise.then(function (isExisted) {
+                    if(isExisted){
+                        nodeModulePaths.push(systemJsPath);
+                    }
+                });
             }
 
             let modulePath = angularWindowModuleConfig.angularModulePath;
@@ -51,7 +64,7 @@ export class ElegularWindow {
             let angularLoadContext: AngularLoadContext = new AngularLoadContext();
             angularLoadContext.nodeModulePaths = nodeModulePaths;
             angularLoadContext.angularModulePath = relativePath;
-            angularLoadContext.elegularWindowConfig = angularWindowModuleConfig;
+            angularLoadContext.elegularWindowOptions = angularWindowModuleConfig;
             angularLoadContext.windowId = this.id;
             this.browserWindow.webContents.send("angular-load", angularLoadContext);
         });
