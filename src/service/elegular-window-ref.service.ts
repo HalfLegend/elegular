@@ -11,9 +11,18 @@ import Point = Electron.Point;
 import IpcRendererEvent = Electron.IpcRendererEvent;
 import {WindowMessageDispatcherBase} from "./window-message-dispatcher-base.class";
 
+/**
+ * Better not use remote.getCurrentWindow(), to do any business.
+ * Because the parent window can get the reference of child. In this case, remote.getCurrentWindow() will always return the parent window instead of the child.
+ */
 @Injectable()
 export class ElegularWindowRef extends WindowMessageDispatcherBase{
     //private _ipcRenderer: Electron.IpcRenderer;
+
+    //Better not use remote.getCurrentWindow()
+    // public getBrowserWindow():BrowserWindow{
+    //     return remote.getCurrentWindow();
+    // }
 
     constructor(_windowId: number) {
         super(_windowId);

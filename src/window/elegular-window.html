@@ -6,7 +6,9 @@
 <body>
 <elegular-window>Loading...</elegular-window>
 <script>
-    var electron = require("electron");
+    const electron = require("electron");
+    const { remote } = electron;
+    const { Menu, MenuItem } = remote;
 </script>
 <script src="elegular-window-renderer.js"></script>
 </body>

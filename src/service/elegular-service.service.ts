@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {ElegularWindowOptions, WindowId} from "../angular-options";
 import {ElegularWindowRef} from "./elegular-window-ref.service";
 import {WindowMessageDispatcherBase} from "./window-message-dispatcher-base.class";
+import BrowserWindow = Electron.BrowserWindow;
 
 @Injectable()
 export class ElegularService extends WindowMessageDispatcherBase{
@@ -21,5 +22,10 @@ export class ElegularService extends WindowMessageDispatcherBase{
 
     public createModal(){
 
+    }
+
+    //noinspection JSMethodCanBeStatic
+    public getCurrentBrowserWindow():BrowserWindow{
+        return remote.getCurrentWindow();
     }
 }

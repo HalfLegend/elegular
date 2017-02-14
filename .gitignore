@@ -7,3 +7,4 @@ node_modules
 # Typecript Output
 *.js
 *.js.map
+/npm-debug.log

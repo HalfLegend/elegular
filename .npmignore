@@ -3,3 +3,5 @@ node_modules
 
 # IntelliJ and WebStorm
 .idea
+
+/npm-debug.log
