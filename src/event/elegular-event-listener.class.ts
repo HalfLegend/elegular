@@ -1,5 +1,8 @@
 import * as _ from "lodash";
 
+/**
+ * Basic class of all event listeners, including application event listener, web content event listener, window event listener.
+ */
 export abstract class ElegularEventListener<F extends Function>{
     protected _functionList: Array<F>;
 

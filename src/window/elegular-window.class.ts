@@ -6,18 +6,19 @@ import * as path from "path";
 import {AngularLoadContext} from "./angular-load-context.class";
 import {ElegularWindowOptions} from "../angular-options";
 import {ElegularWindowManager} from "./elegular-window-manager.class";
-import {ElegularWindowEventManager} from "../event/window-event/elegular-window-event-manager.class";
 import Size = Electron.Size;
 import Rectangle = Electron.Rectangle;
 import NativeImage = Electron.NativeImage;
 import LoadURLOptions = Electron.LoadURLOptions;
 import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
-import * as Lazy from "lazy.js";
-import {max} from "rxjs/operator/max";
+import {ElegularWindowEventManager} from "../event/window-event/elegular-window/elegular-window-event-manager.class";
 
 export class ElegularWindow {
-    public browserWindow: BrowserWindow;
+    private _browserWindow:BrowserWindow;
+    public get browserWindow(): BrowserWindow{
+        return this._browserWindow;
+    };
 
     public get id(): number {
         return this.browserWindow.id;
@@ -25,7 +26,7 @@ export class ElegularWindow {
 
     constructor(angularWindowModuleConfig: ElegularWindowOptions) {
         let BrowserWindowConstructor = electron.BrowserWindow;
-        this.browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
+        this._browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
         let dirPath = ElegularWindow.analyzeDirPath();
 
         this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
@@ -93,8 +94,8 @@ export class ElegularWindow {
         return dirPath;
     }
 
-    public get windowEventManager() {
-        return new ElegularWindowEventManager(this.browserWindow.webContents);
+    public get events() : ElegularWindowEventManager {
+        return new ElegularWindowEventManager(this);
     }
 
     private static findNodeModuleFolder(dirPath: string): string {

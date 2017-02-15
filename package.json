@@ -1,6 +1,6 @@
 {
   "name": "elegular",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "description": "The easiest way to use Angular in Electron.",
   "main": "index.js",
   "scripts": {},

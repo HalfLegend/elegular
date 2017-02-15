@@ -1,6 +1,4 @@
-import {ElegularEventListener} from "../elegular-event-listener.class";
-import {ElegularAppEvents} from "../app-event/elegular-app-events.enum";
-export enum ElegularWindowEvents{
+export enum WebContentEvent{
     /**
      * Emitted when the navigation is done, i.e. the spinner of the tab has stopped spinning,
      * and the onload event was dispatched.

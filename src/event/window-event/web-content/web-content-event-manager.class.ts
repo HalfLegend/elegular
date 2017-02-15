@@ -1,18 +1,19 @@
-import {ElegularEventListener} from "../elegular-event-listener.class";
-import {ElegularWindowEvents} from "./elegular-window-events.enum";
+import {ElegularEventListener} from "../../elegular-event-listener.class";
+import {WebContentEvent} from "./web-content-event.enum";
 import {
-    ElegularWindowAppEventListener,
-    IElegularWindowAppEventListener
-} from "./window-event-listener/window-event-listener.class";
+    WebContentEventListener,
+    IWebContentEventListenerConstructor
+} from "./web-content-event-listener/web-content-event-listener.class";
 import BrowserWindow = Electron.BrowserWindow;
 import WebContents = Electron.WebContents;
-export class ElegularWindowEventManager{
+export class WebContentEventManager{
     constructor(private _webContents: WebContents){}
 
-    private _eventListenerMap = new Map<ElegularWindowEvents, ElegularEventListener<Function>>();
-    public getEventListener<F extends Function>(event: ElegularWindowEvents, constructor?: IElegularWindowAppEventListener<F>): ElegularEventListener<Function> {
+    private _eventListenerMap = new Map<WebContentEvent, WebContentEventListener<Function>>();
+
+    public getEventListener<F extends Function>(event: WebContentEvent, constructor?: IWebContentEventListenerConstructor<F>): WebContentEventListener<Function> {
         if (!constructor) {
-            constructor = ElegularWindowAppEventListener;
+            constructor = WebContentEventListener;
         }
         let result = this._eventListenerMap.get(event);
         if (!result) {
@@ -26,65 +27,65 @@ export class ElegularWindowEventManager{
      * Emitted when the navigation is done, i.e. the spinner of the tab has stopped spinning,
      * and the onload event was dispatched.
      */
-    public get didFinishLoad(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidFinishLoad);
+    public get didFinishLoad(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidFinishLoad);
     }
 
     /**
      * This event is like did-finish-load but emitted when the load failed or was cancelled,
      * e.g. window.stop() is invoked.
      */
-    public get didFailLoad(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidFailLoad);
+    public get didFailLoad(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidFailLoad);
     }
     /**
      * Emitted when a frame has done navigation.
      */
-    public get didFrameFinishLoad(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidFrameFinishLoad);
+    public get didFrameFinishLoad(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidFrameFinishLoad);
     }
 
     /**
      * Corresponds to the points in time when the spinner of the tab started spinning.
      */
-    public get didStartLoading(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidStartLoading);
+    public get didStartLoading(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidStartLoading);
     }
 
     /**
      * Corresponds to the points in time when the spinner of the tab stopped spinning.
      */
-    public get didStopLoading(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidStopLoading);
+    public get didStopLoading(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidStopLoading);
     }
 
     /**
      * Emitted when details regarding a requested resource are available.
      * status indicates the socket connection to download the resource.
      */
-    public get didGetResponseDetails(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidGetResponseDetails);
+    public get didGetResponseDetails(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidGetResponseDetails);
     }
 
     /**
      * Emitted when a redirect is received while requesting a resource.
      */
-    public get didGetRedirectRequest(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidGetRedirectRequest);
+    public get didGetRedirectRequest(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidGetRedirectRequest);
     }
 
     /**
      * Emitted when the document in the given frame is loaded.
      */
-    public get domReady(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DomReady);
+    public get domReady(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DomReady);
     }
 
     /**
      * Emitted when page receives favicon URLs.
      */
-    public get pageFaviconUpdated(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.PageFaviconUpdated);
+    public get pageFaviconUpdated(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.PageFaviconUpdated);
     }
 
     /**
@@ -95,8 +96,8 @@ export class ElegularWindowEventManager{
      *
      * Calling event.preventDefault() will prevent creating new windows.
      */
-    public get newWindow(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.NewWindow);
+    public get newWindow(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.NewWindow);
     }
 
     /**
@@ -111,8 +112,8 @@ export class ElegularWindowEventManager{
      *
      * Calling event.preventDefault() will prevent the navigation.
      */
-    public get willNavigate(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.WillNavigate);
+    public get willNavigate(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.WillNavigate);
     }
 
     /**
@@ -121,8 +122,8 @@ export class ElegularWindowEventManager{
      * This event is not emitted for in-page navigations, such as clicking anchor links
      * or updating the window.location.hash. Use did-navigate-in-page event for this purpose.
      */
-    public get didNavigate(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidNavigate);
+    public get didNavigate(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidNavigate);
     }
 
     /**
@@ -132,110 +133,110 @@ export class ElegularWindowEventManager{
      * navigation outside of the page. Examples of this occurring are when anchor links
      * are clicked or when the DOM hashchange event is triggered.
      */
-    public get didNavigateInPage(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidNavigateInPage);
+    public get didNavigateInPage(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidNavigateInPage);
     }
 
     /**
      * Emitted when the renderer process has crashed.
      */
-    public get crashed(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.Crashed);
+    public get crashed(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.Crashed);
     }
 
     /**
      * Emitted when a plugin process has crashed.
      */
-    public get pluginCrashed(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.PluginCrashed);
+    public get pluginCrashed(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.PluginCrashed);
     }
 
     /**
      * Emitted when webContents is destroyed.
      */
-    public get destroyed(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.Destroyed);
+    public get destroyed(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.Destroyed);
     }
 
     /**
      * Emitted when DevTools is opened.
      */
-    public get devtoolsOpened(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DevtoolsOpened);
+    public get devtoolsOpened(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DevtoolsOpened);
     }
 
     /**
      * Emitted when DevTools is closed.
      */
-    public get devtoolsClosed(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DevtoolsClosed);
+    public get devtoolsClosed(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DevtoolsClosed);
     }
 
     /**
      * Emitted when DevTools is focused / opened.
      */
-    public get devtoolsFocused(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DevtoolsFocused);
+    public get devtoolsFocused(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DevtoolsFocused);
     }
 
     /**
      * Emitted when failed to verify the certificate for url.
      * The usage is the same with the "certificate-error" event of app.
      */
-    public get certificateError(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.CertificateError);
+    public get certificateError(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.CertificateError);
     }
 
     /**
      * Emitted when a client certificate is requested.
      * The usage is the same with the "select-client-certificate" event of app.
      */
-    public get selectClientCertificate(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.SelectClientCertificate);
+    public get selectClientCertificate(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.SelectClientCertificate);
     }
 
     /**
      * Emitted when webContents wants to do basic auth.
      * The usage is the same with the "login" event of app.
      */
-    public get login(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.Login);
+    public get login(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.Login);
     }
 
     /**
      * Emitted when a result is available for webContents.findInPage request.
      */
-    public get foundInPage(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.FoundInPage);
+    public get foundInPage(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.FoundInPage);
     }
 
     /**
      * Emitted when media starts playing.
      */
-    public get mediaStartedPlaying(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.MediaStartedPlaying);
+    public get mediaStartedPlaying(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.MediaStartedPlaying);
     }
 
     /**
      * Emitted when media is paused or done playing.
      */
-    public get mediaPaused(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.MediaPaused);
+    public get mediaPaused(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.MediaPaused);
     }
 
     /**
      * Emitted when a page’s theme color changes. This is usually due to encountering a meta tag:
      * <meta name='theme-color' content='#ff0000'>
      */
-    public get didChangeThemeColor(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.DidChangeThemeColor);
+    public get didChangeThemeColor(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.DidChangeThemeColor);
     }
 
     /**
      * Emitted when mouse moves over a link or the keyboard moves the focus to a link.
      */
-    public get updateTargetUrl(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.UpdateTargetUrl);
+    public get updateTargetUrl(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.UpdateTargetUrl);
     }
 
     /**
@@ -243,15 +244,15 @@ export class ElegularWindowEventManager{
      * If the type parameter is custom, the image parameter will hold the custom cursor image
      * in a NativeImage, and scale, size and hotspot will hold additional information about the custom cursor.
      */
-    public get cursorChanged(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.CursorChanged);
+    public get cursorChanged(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.CursorChanged);
     }
 
     /**
      * Emitted when there is a new context menu that needs to be handled.
      */
-    public get contextMenu(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.ContextMenu);
+    public get contextMenu(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.ContextMenu);
     }
 
     /**
@@ -261,18 +262,18 @@ export class ElegularWindowEventManager{
      * callback should be called with deviceId to be selected,
      * passing empty string to callback will cancel the request.
      */
-    public get selectBluetoothDevice(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.SelectBluetoothDevice);
+    public get selectBluetoothDevice(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.SelectBluetoothDevice);
     }
 
     /**
      * Emitted when a new frame is generated. Only the dirty area is passed in the buffer.
      */
-    public get paint(): ElegularEventListener<Function> {
-        return this.getEventListener(ElegularWindowEvents.Paint);
+    public get paint(): WebContentEventListener<Function> {
+        return this.getEventListener(WebContentEvent.Paint);
     }
 
     // public get elegularInternalWindowFunction(): ElegularEventListener<Function> {
-    //     return this.getEventListener(ElegularWindowEvents.ElegularInternalWindowFunction);
+    //     return this.getEventListener(WebContentEvent.ElegularInternalWindowFunction);
     // }
 }

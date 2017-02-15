@@ -1,4 +1,4 @@
-import {ElegularAppEvents} from "./elegular-app-events.enum";
+import {ElegularAppEvent} from "./elegular-app-event.enum";
 import BrowserWindow = Electron.BrowserWindow;
 import {BrowserWindowElectronEventListener} from "./event-listener/window-app-event-listener.class";
 import WebContents = Electron.WebContents;
@@ -12,92 +12,92 @@ import {
 } from "./event-listener/app-event-listener.class";
 
 export class ElegularAppEventManager {
-    private static _eventListenerMap = new Map<ElegularAppEvents, ElegularEventListener<Function>>();
+    private static _eventListenerMap = new Map<ElegularAppEvent, ElegularAppEventListener<Function>>();
 
-    public static get willFinishLaunching(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.WillFinishLaunching);
+    public static get willFinishLaunching(): ElegularAppEventListener<Function> {
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.WillFinishLaunching);
     }
 
-    public static get ready(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.Ready);
+    public static get ready(): ElegularAppEventListener<Function> {
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.Ready);
     }
 
-    public static get windowAllClosed(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.WindowAllClosed);
+    public static get windowAllClosed(): ElegularAppEventListener<Function> {
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.WindowAllClosed);
     }
 
-    public static get beforeQuit(): ElegularEventListener<(event: Event) => void> {
-        return <ElegularEventListener<(event: Event) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.BeforeQuit);
+    public static get beforeQuit(): ElegularAppEventListener<(event: Event) => void> {
+        return <ElegularAppEventListener<(event: Event) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.BeforeQuit);
     }
 
-    public static get willQuit(): ElegularEventListener<(event: Event) => void> {
-        return <ElegularEventListener<(event: Event) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.WillQuit);
+    public static get willQuit(): ElegularAppEventListener<(event: Event) => void> {
+        return <ElegularAppEventListener<(event: Event) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.WillQuit);
     }
 
-    public static get quit(): ElegularEventListener<(event: Event, exitCode: number) => void> {
-        return <ElegularEventListener<(event: Event, exitCode: number) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.WillQuit);
+    public static get quit(): ElegularAppEventListener<(event: Event, exitCode: number) => void> {
+        return <ElegularAppEventListener<(event: Event, exitCode: number) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.WillQuit);
     }
 
-    public static get openFile(): ElegularEventListener<(event: Event, url: string) => void> {
-        return <ElegularEventListener<(event: Event, url: string) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.OpenFile);
+    public static get openFile(): ElegularAppEventListener<(event: Event, url: string) => void> {
+        return <ElegularAppEventListener<(event: Event, url: string) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.OpenFile);
     }
 
-    public static get openUrl(): ElegularEventListener<(event: Event, url: string) => void> {
-        return <ElegularEventListener<(event: Event, url: string) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.OpenUrl);
+    public static get openUrl(): ElegularAppEventListener<(event: Event, url: string) => void> {
+        return <ElegularAppEventListener<(event: Event, url: string) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.OpenUrl);
     }
 
     public static get activate(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.Activate);
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.Activate);
     }
 
-    public static get continueActivity(): ElegularEventListener<(event: Event, type: string, userInfo: Object) => void> {
-        return <ElegularEventListener<(event: Event, type: string, userInfo: Object) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.ContinueActivity);
+    public static get continueActivity(): ElegularAppEventListener<(event: Event, type: string, userInfo: Object) => void> {
+        return <ElegularAppEventListener<(event: Event, type: string, userInfo: Object) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.ContinueActivity);
     }
 
     public static get browserWindowBlur(): ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void> {
-        return <ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.BrowserWindowBlur, BrowserWindowElectronEventListener);
+        return <ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.BrowserWindowBlur, BrowserWindowElectronEventListener);
     }
 
     /**
      * Emitted when a browserWindow gets focused.
-     * @see ElegularAppEvents.BrowserWindowFocus
+     * @see ElegularAppEvent.BrowserWindowFocus
      * @returns ElegularEventListener&lt;(event: Event, browserWindow: BrowserWindow) => void&gt;
      */
     public static get browserWindowFocus(): ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void> {
-        return <ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.BrowserWindowFocus, BrowserWindowElectronEventListener);
+        return <ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.BrowserWindowFocus, BrowserWindowElectronEventListener);
     }
 
     /**
      * Emitted when a new browserWindow is created.
      */
     public static get browserWindowCreated(): ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void> {
-        return <ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.BrowserWindowCreated, BrowserWindowElectronEventListener);
+        return <ElegularEventListener<(event: Event, browserWindow: BrowserWindow) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.BrowserWindowCreated, BrowserWindowElectronEventListener);
     }
 
     /**
      * Emitted when a new webContents is created.
      * TODO: WebContents
      */
-    public static get webContentsCreated(): ElegularEventListener<(event: Event, webContents: WebContents) => void> {
-        return <ElegularEventListener<(event: Event, webContents: WebContents) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.WebContentsCreated);
+    public static get webContentsCreated(): ElegularAppEventListener<(event: Event, webContents: WebContents) => void> {
+        return <ElegularAppEventListener<(event: Event, webContents: WebContents) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.WebContentsCreated);
     }
 
     /**
      * Emitted when failed to verify the certificate for url, to trust the certificate
      * you should prevent the default behavior with event.preventDefault() and call callback(true).
      */
-    public static get certificateError(): ElegularEventListener<(event: Event,
-                                                                 webContents: WebContents,
-                                                                 url: string,
-                                                                 error: string,
-                                                                 certificate: Certificate,
-                                                                 callback: (trust: boolean) => void) => void> {
-        return <ElegularEventListener<(event: Event,
-                                       webContents: WebContents,
-                                       url: string,
-                                       error: string,
-                                       certificate: Certificate,
-                                       callback: (trust: boolean) => void) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvents.CertificateError);
+    public static get certificateError(): ElegularAppEventListener<(event: Event,
+                                                                    webContents: WebContents,
+                                                                    url: string,
+                                                                    error: string,
+                                                                    certificate: Certificate,
+                                                                    callback: (trust: boolean) => void) => void> {
+        return <ElegularAppEventListener<(event: Event,
+                                          webContents: WebContents,
+                                          url: string,
+                                          error: string,
+                                          certificate: Certificate,
+                                          callback: (trust: boolean) => void) => void>>ElegularAppEventManager.getEventListener(ElegularAppEvent.CertificateError);
     }
 
     /**
@@ -108,7 +108,7 @@ export class ElegularAppEventManager {
      * Using event.preventDefault() prevents the application from using the first certificate from the store.
      */
     public static get selectClientCertificate(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.SelectClientCertificate);
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.SelectClientCertificate);
     }
 
     /**
@@ -119,14 +119,14 @@ export class ElegularAppEventManager {
      * and call callback(username, password) with the credentials.
      */
     public static get login(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.Login);
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.Login);
     }
 
     /**
      * Emitted when the gpu process crashes.
      */
     public static get gpuProcessCrashed(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.GpuProcessCrashed);
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.GpuProcessCrashed);
     }
 
     /**
@@ -135,10 +135,10 @@ export class ElegularAppEventManager {
      * Note: This API is only available on macOS and Windows.
      */
     public static get accessibilitySupportChanged(): ElegularEventListener<Function> {
-        return ElegularAppEventManager.getEventListener(ElegularAppEvents.AccessibilitySupportChanged);
+        return ElegularAppEventManager.getEventListener(ElegularAppEvent.AccessibilitySupportChanged);
     }
 
-    public static getEventListener<F extends Function>(event: ElegularAppEvents, constructor?: IElegularAppEventListenerConstructor<F>): ElegularEventListener<Function> {
+    public static getEventListener<F extends Function>(event: ElegularAppEvent, constructor?: IElegularAppEventListenerConstructor<F>): ElegularAppEventListener<F> {
         if (!constructor) {
             constructor = ElegularAppEventListener;
         }
@@ -147,7 +147,7 @@ export class ElegularAppEventManager {
             result = new constructor(event);
             ElegularAppEventManager._eventListenerMap.set(event, result);
         }
-        return result;
+        return <ElegularAppEventListener<F>>result;
     }
 
     private static defaultEventsRegistered: boolean;
@@ -155,7 +155,7 @@ export class ElegularAppEventManager {
     public static registerDefaultEvents() {
         if (!ElegularAppEventManager.defaultEventsRegistered) {
             ElegularAppEventManager.registerDefaultEvent(ElegularAppEventManager.ready, ElegularWindowManager.createMainWindow);
-            ElegularAppEventManager.registerDefaultEvent(ElegularAppEventManager.windowAllClosed, ()=> {
+            ElegularAppEventManager.registerDefaultEvent(ElegularAppEventManager.windowAllClosed, () => {
                 if (process.platform !== 'darwin') {
                     ElegularApplication.quit();
                 }

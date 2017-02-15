@@ -1,4 +1,4 @@
-export enum ElegularAppEvents{
+export enum ElegularAppEvent{
     /**
      * Emitted when the application has finished basic startup.
      * On Windows and Linux, the will-finish-launching event
