@@ -1,4 +1,9 @@
 export class StringUtils{
+    /**
+     * camelCase to dash-case
+     * @param str
+     * @returns {string}
+     */
     public static camelToDash(str: string): string{
         let strParts: string[] = [];
         let temp: string = "";
