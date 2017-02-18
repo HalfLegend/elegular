@@ -164,7 +164,6 @@ class ElegularWindowRenderer {
 
     private _defaultSystemJsConfig: Config = {
         baseURL: '../../../',
-        defaultJSExtensions: true,
         paths: {
             // paths serve as alias
             'npm:': '../../../'
@@ -187,6 +186,9 @@ class ElegularWindowRenderer {
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
+            "": {
+                defaultExtension: 'js'
+            },
             rxjs: {
                 defaultExtension: 'js'
             }

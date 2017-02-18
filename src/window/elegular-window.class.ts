@@ -13,6 +13,7 @@ import LoadURLOptions = Electron.LoadURLOptions;
 import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
 import {ElegularWindowEventManager} from "../event/window-event/elegular-window/elegular-window-event-manager.class";
+import {isUndefined} from "util";
 
 export class ElegularWindow {
     private _browserWindow: BrowserWindow;
@@ -35,30 +36,21 @@ export class ElegularWindow {
         this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
 
         this.browserWindow.webContents.on("did-finish-load", async () => {
-            let nodeModuleFolderPath = ElegularWindow.findNodeModuleFolder(dirPath);
-            let relativePath = path.relative(dirPath, nodeModuleFolderPath);
-
             let nodeModulePaths = [];
-            nodeModulePaths.push(path.join(relativePath, "zone.js", "dist", "zone.js"));
-            nodeModulePaths.push(path.join(relativePath, "reflect-metadata", "Reflect.js"));
-
-            let systemJsConfig = angularWindowModuleConfig.systemJsConfig;
-            // isUseSystemJS is true if it is not configured
-            if (!systemJsConfig || systemJsConfig.isUseSystemJS !== false) {
-                let systemJsPath = path.join(relativePath, "systemjs", "dist", "system.src.js");
-                let currentRelativePath = path.relative(process.cwd(), __dirname);
-                let pa = path.join(currentRelativePath, systemJsPath);
-                let isExisted = await fs.exists(pa);
-                if (isExisted) {
-                    nodeModulePaths.push(systemJsPath);
-                }
+            nodeModulePaths.push(ElegularWindow.findInNodeModulesRelative(dirPath, "zone.js", "dist", "zone.js"));
+            nodeModulePaths.push(ElegularWindow.findInNodeModulesRelative(dirPath,  "reflect-metadata", "Reflect.js"));
+            let systemJsPath = ElegularWindow.findInNodeModulesRelative(dirPath,  "systemjs", "dist", "system.js");
+            if (systemJsPath != null)
+            {
+                nodeModulePaths.push(systemJsPath);
             }
 
-            let modulePath = angularWindowModuleConfig.angularModulePath;
-            if (!fs.existsSync(modulePath)) {
-                modulePath = path.join(process.cwd(), modulePath);
+            let angularModulePath = angularWindowModuleConfig.angularModulePath;
+            if (!fs.existsSync(angularModulePath)) {
+                angularModulePath = path.join(process.cwd(), angularModulePath);
             }
-            relativePath = path.relative(dirPath, modulePath);
+            let relativePath = path.relative(dirPath, angularModulePath);
+            relativePath = relativePath.replace(/\\/g, "/");
 
             let angularLoadContext: AngularLoadContext = new AngularLoadContext();
             angularLoadContext.nodeModulePaths = nodeModulePaths;
@@ -102,17 +94,22 @@ export class ElegularWindow {
         return new ElegularWindowEventManager(this);
     }
 
-    private static findNodeModuleFolder(dirPath: string): string {
-        let nodeModuleFolderName = "node_modules";
-        let folderPath = path.join(dirPath, nodeModuleFolderName);
-        if (fs.existsSync(folderPath)) {
-            return folderPath;
-        }
-        else {
-            return this.findNodeModuleFolder(path.dirname(dirPath));
-        }
+    static findInNodeModulesRelative(dirPath, ...pathNodes) {
+        let f = (innerPath)=>{
+            if (!innerPath) {
+                return undefined;
+            }
+            let nodeModuleFolderName = "node_modules";
+            let folderPath = path.join(innerPath, nodeModuleFolderName, ...pathNodes);
+            if (fs.existsSync(folderPath)) {
+                return path.relative(dirPath, folderPath);
+            }
+            else {
+                return f(path.dirname(innerPath));
+            }
+        };
+        return f(dirPath);
     }
-
     /**
      * Force closing the window, the unload and beforeunload event won't be emitted
      * for the web page, and close event would also not be emitted for this window,

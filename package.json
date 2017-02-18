@@ -1,6 +1,6 @@
 {
   "name": "elegular",
-  "version": "0.0.18",
+  "version": "0.0.21",
   "description": "The easiest way to use Angular in Electron.",
   "main": "index.js",
   "scripts": {},
@@ -27,9 +27,9 @@
     "@angular/platform-browser-dynamic": "^4.0.0-beta.6",
     "@angular/platform-server": "^4.0.0-beta.6",
     "@types/lazy.js": "^0.3.28",
-    "@types/systemjs": "^0.19.33",
+    "@types/systemjs": "^0.20.0",
     "lazy.js": "^0.5.0",
-    "systemjs": "^0.19.46",
+    "systemjs": "^0.20.9",
     "typescript": "^2.1.5"
   }
 }
