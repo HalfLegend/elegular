@@ -1,6 +1,5 @@
 import BrowserWindowOptions = Electron.BrowserWindowOptions;
 import Config = SystemJSLoader.Config;
-import {NgModule} from "@angular/core";
 export type WindowId = string | number | symbol;
 // These options are loaded at backend.
 export interface ElegularWindowOptions extends GlobalElegularOptions{
@@ -8,6 +7,7 @@ export interface ElegularWindowOptions extends GlobalElegularOptions{
     angularModulePath?: string;
     isMainWindow?: boolean;
     isOpenDevTool?: boolean;
+    isStoreWindowStatus?:boolean;
     windowOptions?: BrowserWindowOptions;
 }
 

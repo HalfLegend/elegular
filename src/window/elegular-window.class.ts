@@ -1,7 +1,7 @@
 import BrowserWindowOptions = Electron.BrowserWindowOptions;
 import * as electron from "electron";
 import BrowserWindow = Electron.BrowserWindow;
-import * as fs from "fs";
+import * as fs from "fs-promise";
 import * as path from "path";
 import {AngularLoadContext} from "./angular-load-context.class";
 import {ElegularWindowOptions} from "../angular-options";
@@ -15,8 +15,8 @@ import ThumbarButton = Electron.ThumbarButton;
 import {ElegularWindowEventManager} from "../event/window-event/elegular-window/elegular-window-event-manager.class";
 
 export class ElegularWindow {
-    private _browserWindow:BrowserWindow;
-    public get browserWindow(): BrowserWindow{
+    private _browserWindow: BrowserWindow;
+    public get browserWindow(): BrowserWindow {
         return this._browserWindow;
     };
 
@@ -25,13 +25,16 @@ export class ElegularWindow {
     }
 
     constructor(angularWindowModuleConfig: ElegularWindowOptions) {
+        if (angularWindowModuleConfig.isStoreWindowStatus) {
+
+        }
         let BrowserWindowConstructor = electron.BrowserWindow;
         this._browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
         let dirPath = ElegularWindow.analyzeDirPath();
 
         this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
 
-        this.browserWindow.webContents.on("did-finish-load",async () => {
+        this.browserWindow.webContents.on("did-finish-load", async () => {
             let nodeModuleFolderPath = ElegularWindow.findNodeModuleFolder(dirPath);
             let relativePath = path.relative(dirPath, nodeModuleFolderPath);
 
@@ -44,16 +47,11 @@ export class ElegularWindow {
             if (!systemJsConfig || systemJsConfig.isUseSystemJS !== false) {
                 let systemJsPath = path.join(relativePath, "systemjs", "dist", "system.src.js");
                 let currentRelativePath = path.relative(process.cwd(), __dirname);
-                let pa = path.join(currentRelativePath,systemJsPath);
-
-                let promise = new Promise<boolean>(resolve =>{
-                    fs.exists(pa, (isExisted => resolve(isExisted)) );
-                });
-                await promise.then(function (isExisted) {
-                    if(isExisted){
-                        nodeModulePaths.push(systemJsPath);
-                    }
-                });
+                let pa = path.join(currentRelativePath, systemJsPath);
+                let isExisted = await fs.exists(pa);
+                if (isExisted) {
+                    nodeModulePaths.push(systemJsPath);
+                }
             }
 
             let modulePath = angularWindowModuleConfig.angularModulePath;
@@ -76,6 +74,12 @@ export class ElegularWindow {
         ElegularWindowManager.registerWindow(this);
     }
 
+    /**
+     * Analyze the dirPath to support cnpm.
+     * This file may be under a folder like node_modules/.0.0.15@elegular/
+     * It will be analyzed to node_modules/elegular/
+     * @returns {string}
+     */
     private static analyzeDirPath(): string {
         let dirPath = __dirname;
         let nodeModules = "node_modules";
@@ -94,7 +98,7 @@ export class ElegularWindow {
         return dirPath;
     }
 
-    public get events() : ElegularWindowEventManager {
+    public get events(): ElegularWindowEventManager {
         return new ElegularWindowEventManager(this);
     }
 
