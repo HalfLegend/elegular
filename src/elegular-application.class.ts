@@ -1,6 +1,6 @@
 import BrowserWindow = Electron.BrowserWindow;
 import {ElegularAppEventManager} from "./event/app-event/elegular-app-event-manager.class";
-import {WindowId, ElegularWindowOptions, GlobalElegularOptions} from "./angular-options";
+import {WindowName, ElegularWindowOptions, GlobalElegularOptions} from "./angular-options";
 import {ElegularWindow} from "./window/elegular-window.class";
 import {ElegularWindowManager} from "./window/elegular-window-manager.class";
 import * as electron from "electron";
@@ -34,7 +34,7 @@ export class ElegularApplication {
         return ElegularAppEventManager;
     }
 
-    public static createWindow(configOrId: ElegularWindowOptions | WindowId): ElegularWindow {
+    public static createWindow(configOrId: ElegularWindowOptions | WindowName): ElegularWindow {
         return ElegularWindowManager.createWindow(configOrId);
     }
 

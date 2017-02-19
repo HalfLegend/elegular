@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as election from "electron";
 import {ElegularWindow} from "./elegular-window.class";
 import BrowserWindow = Electron.BrowserWindow;
-import {WindowId, ElegularWindowOptions, GlobalElegularOptions} from "../angular-options";
+import {WindowName, ElegularWindowOptions, GlobalElegularOptions} from "../angular-options";
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 import {ElegularApplication} from "../elegular-application.class";
@@ -27,7 +27,7 @@ export class ElegularWindowManager {
         };
         ipcMain.on("##elegular-internal-window-function-async",callbackAsync);
 
-        ElegularWindowManager._internalGlobalWindowFunctionMap.set("createWindow", (configOrId: ElegularWindowOptions|WindowId)=>{
+        ElegularWindowManager._internalGlobalWindowFunctionMap.set("createWindow", (configOrId: ElegularWindowOptions|WindowName)=>{
             let elegularWindow = ElegularWindowManager.createWindow(configOrId);
             return elegularWindow.id;
         });
@@ -37,7 +37,7 @@ export class ElegularWindowManager {
         let f: Function = null;
         if (windowIndex != null)
         {
-            let win = ElegularWindowManager.getWindowByIndex(windowIndex);
+            let win = ElegularWindowManager.getWindowById(windowIndex);
             if (win != null)
             {
                 f = win[functionName];
@@ -57,15 +57,15 @@ export class ElegularWindowManager {
         this._windowMap.set(electronWindow.browserWindow, electronWindow);
     }
 
-    private static _angularWindowModuleConfigMap: Map<WindowId, ElegularWindowOptions> = new Map<WindowId, ElegularWindowOptions>();
+    private static _angularWindowModuleConfigMap: Map<WindowName, ElegularWindowOptions> = new Map<WindowName, ElegularWindowOptions>();
 
     public static registerAngularWindowModuleConfig(...angularWindowModuleConfigList: ElegularWindowOptions[]): void {
         for (let angularWindowModuleConfig of angularWindowModuleConfigList) {
-            ElegularWindowManager._angularWindowModuleConfigMap.set(angularWindowModuleConfig.windowId, angularWindowModuleConfig);
+            ElegularWindowManager._angularWindowModuleConfigMap.set(angularWindowModuleConfig.windowName, angularWindowModuleConfig);
         }
     }
 
-    public static getWindowByIndex(windowId: number): ElegularWindow {
+    public static getWindowById(windowId: number): ElegularWindow {
         return this.getWindowByBrowserWindow(election.BrowserWindow.fromId(windowId));
     }
 
@@ -88,14 +88,14 @@ export class ElegularWindowManager {
         //ElegularWindowManager.createMainWindow();
     }
 
-    public static createWindow(configOrId: ElegularWindowOptions|WindowId): ElegularWindow {
+    public static createWindow(configOrId: ElegularWindowOptions|WindowName): ElegularWindow {
         let angularWindowModuleConfig: ElegularWindowOptions;
 
         if (_.isObject(configOrId)) {
             angularWindowModuleConfig = <ElegularWindowOptions>configOrId;
         }
         else {
-            angularWindowModuleConfig = ElegularWindowManager._angularWindowModuleConfigMap.get(<WindowId>configOrId);
+            angularWindowModuleConfig = ElegularWindowManager._angularWindowModuleConfigMap.get(<WindowName>configOrId);
         }
 
         angularWindowModuleConfig = ElegularWindowManager.mergeElegularWindowOptionsWithGlobal(angularWindowModuleConfig);

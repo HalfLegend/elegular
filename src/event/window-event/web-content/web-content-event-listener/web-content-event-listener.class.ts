@@ -1,7 +1,7 @@
 import {ElegularEventListener} from "../../../elegular-event-listener.class";
 import {WebContentEvent} from "../web-content-event.enum";
 import BrowserWindow = Electron.BrowserWindow;
-import {StringUtils} from "../../../../utils/string-utils.class";
+import {StringTooling} from "../../../../tooling/string-tooling.class";
 import WebContents = Electron.WebContents;
 
 export interface IWebContentEventListenerConstructor<F extends Function> {
@@ -16,7 +16,7 @@ export class WebContentEventListener<F extends Function> extends ElegularEventLi
     protected registerListener() {
         if (!this._functionList) {
             this._functionList = [];
-            this._webContents.on(StringUtils.camelToDash(WebContentEvent[this._event]), (...args)=>{
+            this._webContents.on(StringTooling.camelToDash(WebContentEvent[this._event]), (...args)=>{
                 this.callback(...args);
             });
         }
@@ -25,7 +25,7 @@ export class WebContentEventListener<F extends Function> extends ElegularEventLi
     protected removeListener() {
         if (!this._functionList) {
             this._functionList = null;
-            this._webContents.on(StringUtils.camelToDash(WebContentEvent[this._event]), null);
+            this._webContents.on(StringTooling.camelToDash(WebContentEvent[this._event]), null);
         }
     }
 }

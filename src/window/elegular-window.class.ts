@@ -14,6 +14,8 @@ import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
 import {ElegularWindowEventManager} from "../event/window-event/elegular-window/elegular-window-event-manager.class";
 import {isUndefined} from "util";
+import {PersistenceManager} from "../persistence/persistence-manager.class";
+import {StringTooling} from "../tooling/string-tooling.class";
 
 export class ElegularWindow {
     private _browserWindow: BrowserWindow;
@@ -26,44 +28,71 @@ export class ElegularWindow {
     }
 
     constructor(angularWindowModuleConfig: ElegularWindowOptions) {
-        if (angularWindowModuleConfig.isStoreWindowStatus) {
-
-        }
-        let BrowserWindowConstructor = electron.BrowserWindow;
-        this._browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
-        let dirPath = ElegularWindow.analyzeDirPath();
-
-        this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
-
-        this.browserWindow.webContents.on("did-finish-load", async () => {
-            let nodeModulePaths = [];
-            nodeModulePaths.push(ElegularWindow.findInNodeModulesRelative(dirPath, "zone.js", "dist", "zone.js"));
-            nodeModulePaths.push(ElegularWindow.findInNodeModulesRelative(dirPath,  "reflect-metadata", "Reflect.js"));
-            let systemJsPath = ElegularWindow.findInNodeModulesRelative(dirPath,  "systemjs", "dist", "system.js");
-            if (systemJsPath != null)
-            {
-                nodeModulePaths.push(systemJsPath);
+        (async () => {
+            let windowName = angularWindowModuleConfig.windowName;
+            let windowOptions = angularWindowModuleConfig.windowOptions;
+            if (angularWindowModuleConfig.isStoreWindowStatus) {
+                let windowStatus = await PersistenceManager.readStoredWindowStatusAsync(windowName);
+                if (windowStatus) {
+                    for (let propName in windowStatus) {
+                        if (windowStatus.hasOwnProperty(propName)) {
+                            let newPropName = StringTooling.stripStartingIsPropertyName(propName);
+                            windowOptions[newPropName] = windowStatus[propName];
+                        }
+                    }
+                }
             }
+            let BrowserWindowConstructor = electron.BrowserWindow;
+            this._browserWindow = new BrowserWindowConstructor(angularWindowModuleConfig.windowOptions);
 
-            let angularModulePath = angularWindowModuleConfig.angularModulePath;
-            if (!fs.existsSync(angularModulePath)) {
-                angularModulePath = path.join(process.cwd(), angularModulePath);
+            this.events.close.registerFirst(async () => {
+                if (angularWindowModuleConfig.isStoreWindowStatus) {
+                    let bounds = this.getBounds();
+                    let windowStatus:WindowStatus = {
+                        x: bounds.x,
+                        y: bounds.y,
+                        width: bounds.width,
+                        height:bounds.height,
+                        isFullScreen: this.isFullScreen(),
+                        isMinimized: this.isMinimized(),
+                        isMaximized:this.isMaximized()
+                    };
+                    await PersistenceManager.storeWindowStatus(windowName, windowStatus);
+                }
+            });
+
+            let dirPath = ElegularWindow.analyzeDirPath();
+            this.browserWindow.loadURL(`file://${dirPath}/elegular-window.html`);
+
+            this.browserWindow.webContents.on("did-finish-load", async () => {
+                let nodeModulePaths = [];
+                nodeModulePaths.push(ElegularWindow.findInNodeModulesRelative(dirPath, "zone.js", "dist", "zone.js"));
+                nodeModulePaths.push(ElegularWindow.findInNodeModulesRelative(dirPath, "reflect-metadata", "Reflect.js"));
+                let systemJsPath = ElegularWindow.findInNodeModulesRelative(dirPath, "systemjs", "dist", "system.js");
+                if (systemJsPath != null) {
+                    nodeModulePaths.push(systemJsPath);
+                }
+
+                let angularModulePath = angularWindowModuleConfig.angularModulePath;
+                if (!fs.existsSync(angularModulePath)) {
+                    angularModulePath = path.join(process.cwd(), angularModulePath);
+                }
+                let relativePath = path.relative(dirPath, angularModulePath);
+                relativePath = relativePath.replace(/\\/g, "/");
+
+                let angularLoadContext: AngularLoadContext = new AngularLoadContext();
+                angularLoadContext.nodeModulePaths = nodeModulePaths;
+                angularLoadContext.angularModulePath = relativePath;
+                angularLoadContext.elegularWindowOptions = angularWindowModuleConfig;
+                angularLoadContext.windowId = this.id;
+                this.browserWindow.webContents.send("angular-load", angularLoadContext);
+            });
+
+            if (angularWindowModuleConfig.isOpenDevTool) {
+                this.browserWindow.webContents.openDevTools();
             }
-            let relativePath = path.relative(dirPath, angularModulePath);
-            relativePath = relativePath.replace(/\\/g, "/");
-
-            let angularLoadContext: AngularLoadContext = new AngularLoadContext();
-            angularLoadContext.nodeModulePaths = nodeModulePaths;
-            angularLoadContext.angularModulePath = relativePath;
-            angularLoadContext.elegularWindowOptions = angularWindowModuleConfig;
-            angularLoadContext.windowId = this.id;
-            this.browserWindow.webContents.send("angular-load", angularLoadContext);
-        });
-
-        if (angularWindowModuleConfig.isOpenDevTool) {
-            this.browserWindow.webContents.openDevTools();
-        }
-        ElegularWindowManager.registerWindow(this);
+            ElegularWindowManager.registerWindow(this);
+        })();
     }
 
     /**
@@ -95,7 +124,7 @@ export class ElegularWindow {
     }
 
     static findInNodeModulesRelative(dirPath, ...pathNodes) {
-        let f = (innerPath)=>{
+        let f = (innerPath) => {
             if (!innerPath) {
                 return undefined;
             }
@@ -110,6 +139,7 @@ export class ElegularWindow {
         };
         return f(dirPath);
     }
+
     /**
      * Force closing the window, the unload and beforeunload event won't be emitted
      * for the web page, and close event would also not be emitted for this window,

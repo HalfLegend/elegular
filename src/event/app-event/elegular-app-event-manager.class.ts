@@ -10,6 +10,7 @@ import {
     ElegularAppEventListener,
     IElegularAppEventListenerConstructor
 } from "./event-listener/app-event-listener.class";
+import {PersistenceManager} from "../../persistence/persistence-manager.class";
 
 export class ElegularAppEventManager {
     private static _eventListenerMap = new Map<ElegularAppEvent, ElegularAppEventListener<Function>>();
@@ -156,6 +157,7 @@ export class ElegularAppEventManager {
         if (!ElegularAppEventManager.defaultEventsRegistered) {
             ElegularAppEventManager.registerDefaultEvent(ElegularAppEventManager.ready, ElegularWindowManager.createMainWindow);
             ElegularAppEventManager.registerDefaultEvent(ElegularAppEventManager.windowAllClosed, () => {
+                PersistenceManager.storeWindowIdMap();
                 if (process.platform !== 'darwin') {
                     ElegularApplication.quit();
                 }

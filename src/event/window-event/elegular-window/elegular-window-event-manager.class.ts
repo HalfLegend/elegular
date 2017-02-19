@@ -11,11 +11,11 @@ export class ElegularWindowEventManager {
 
     private _eventListenerMap = new Map<ElegularWindowEvent, ElegularWindowEventListener<Function>>();
 
-    public getEventListener<F extends Function>(event: ElegularWindowEvent, constructor?: IElegularWindowEventListenerConstructor<F>): ElegularWindowEventListener<Function> {
+    public getEventListener<F extends Function>(event: ElegularWindowEvent, constructor?: IElegularWindowEventListenerConstructor<F>): ElegularWindowEventListener<F> {
         if (!constructor) {
             constructor = ElegularWindowEventListener;
         }
-        let result = this._eventListenerMap.get(event);
+        let result = <ElegularWindowEventListener<F>>this._eventListenerMap.get(event);
         if (!result) {
             result = new constructor(event, this._elegularWindow);
             this._eventListenerMap.set(event, result);
@@ -35,7 +35,7 @@ export class ElegularWindowEventManager {
      * Emitted when the window is going to be closed. It's emitted before the before unload
      * and unload event of the DOM. Calling event.preventDefault() will cancel the close.
      */
-    public get close(): ElegularWindowEventListener<Function> {
+    public get close(): ElegularWindowEventListener<(event: Event) => void> {
         return this.getEventListener<(event: Event) => void>(ElegularWindowEvent.Close);
     }
 

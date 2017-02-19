@@ -1,7 +1,7 @@
 import {ElegularEventListener} from "../../../elegular-event-listener.class";
 import {ElegularWindowEvent} from "../elegular-window-event.enum";
 import BrowserWindow = Electron.BrowserWindow;
-import {StringUtils} from "../../../../utils/string-utils.class";
+import {StringTooling} from "../../../../tooling/string-tooling.class";
 import {ElegularWindow} from "../../../../window/elegular-window.class";
 
 export interface IElegularWindowEventListenerConstructor<F extends Function> {
@@ -16,7 +16,7 @@ export class ElegularWindowEventListener<F extends Function> extends ElegularEve
     protected registerListener() {
         if (!this._functionList) {
             this._functionList = [];
-             this._elegularWindow.browserWindow.on(StringUtils.camelToDash(ElegularWindowEvent[this._event]), (...args)=>{
+             this._elegularWindow.browserWindow.on(StringTooling.camelToDash(ElegularWindowEvent[this._event]), (...args)=>{
                 this.callback(...args);
             });
         }
@@ -25,7 +25,7 @@ export class ElegularWindowEventListener<F extends Function> extends ElegularEve
     protected removeListener() {
         if (!this._functionList) {
             this._functionList = null;
-            this._elegularWindow.browserWindow.on(StringUtils.camelToDash(ElegularWindowEvent[this._event]), null);
+            this._elegularWindow.browserWindow.on(StringTooling.camelToDash(ElegularWindowEvent[this._event]), null);
         }
     }
 }
