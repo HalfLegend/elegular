@@ -77,7 +77,7 @@ export class ElegularWindow {
                 if (!fs.existsSync(angularModulePath)) {
                     angularModulePath = path.join(process.cwd(), angularModulePath);
                 }
-                let relativePath = path.relative(dirPath, angularModulePath);
+                let relativePath = angularModulePath; //path.relative(dirPath, angularModulePath);
                 relativePath = relativePath.replace(/\\/g, "/");
 
                 let angularLoadContext: AngularLoadContext = new AngularLoadContext();

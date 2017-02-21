@@ -6,6 +6,7 @@ import IpcRendererEvent = Electron.IpcRendererEvent;
 import {AngularLoadContext} from "./angular-load-context.class";
 import Config = SystemJSLoader.Config;
 import {ElegularWindowOptions} from "../angular-options";
+import * as path from "path";
 
 /**
  * Loaded in a window. Will be run in a client.
@@ -22,6 +23,10 @@ class ElegularWindowRenderer {
             this._angularLoadContext = angularLoadContext;
             ElegularWindowRenderer.createAllScriptSync(...this._angularLoadContext.nodeModulePaths).then(async () => {
                 let baseNode = window.document.createElement("base");
+                if (!this._angularLoadContext.angularModulePath.startsWith("file:///"))
+                {
+                    this._angularLoadContext.angularModulePath = "file:///" + this._angularLoadContext.angularModulePath;
+                }
                 baseNode.href = this._angularLoadContext.angularModulePath;
                 window.document.head.appendChild(baseNode);
 
@@ -31,22 +36,23 @@ class ElegularWindowRenderer {
                 let moduleClass;
                 let moduleDecorator;
 
-                if (angularLoadContext.angularModulePath){
-                    let moduleContainer = await this.loadFileAsync(angularLoadContext.angularModulePath);
-                    for (let propName in moduleContainer) {
-                        //noinspection JSUnfilteredForInLoop
-                        let prop = moduleContainer[propName];
+                let relativePath = path.dirname(document.location.href);
+                relativePath = path.relative(relativePath, angularLoadContext.angularModulePath);
+                relativePath = relativePath.replace(/\\/g, "/");
+                let moduleContainer = await this.loadFileAsync(relativePath);
+                for (let propName in moduleContainer) {
+                    //noinspection JSUnfilteredForInLoop
+                    let prop = moduleContainer[propName];
 
-                        if (_.isFunction(prop)) {
-                            let list: any[] = Reflect.getMetadata("annotations", prop);
-                            if (moduleDecorator = _.find(list, value => {
-                                    return value.constructor.name === "DecoratorFactory"
-                                        && value.hasOwnProperty("bootstrap");
-                                })) {
-                                ElegularWindowRenderer._analyzeBootstrap(...moduleDecorator.bootstrap);
-                                moduleClass = prop;
-                                break;
-                            }
+                    if (_.isFunction(prop)) {
+                        let list: any[] = Reflect.getMetadata("annotations", prop);
+                        if (moduleDecorator = _.find(list, value => {
+                                return value.constructor.name === "DecoratorFactory"
+                                    && value.hasOwnProperty("bootstrap");
+                            })) {
+                            ElegularWindowRenderer._analyzeBootstrap(...moduleDecorator.bootstrap);
+                            moduleClass = prop;
+                            break;
                         }
                     }
                 }
