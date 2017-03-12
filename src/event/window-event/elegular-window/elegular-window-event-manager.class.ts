@@ -1,12 +1,13 @@
-import {ElegularWindow} from "../../../window/elegular-window.class";
+import {FileElegularWindow} from "../../../window/fileMode/file-elegular-window.class";
 import {ElegularWindowEvent} from "./elegular-window-event.enum";
 import {
     ElegularWindowEventListener,
     IElegularWindowEventListenerConstructor
 } from "./elegular-window-event-listener/elegular-window-enent-listener";
 import SwipeDirection = Electron.SwipeDirection;
+import {ElegularWindowBase} from "../../../window/elegular-winodw-base.class";
 export class ElegularWindowEventManager {
-    constructor(private _elegularWindow: ElegularWindow) {
+    constructor(private _elegularWindow: ElegularWindowBase) {
     }
 
     private _eventListenerMap = new Map<ElegularWindowEvent, ElegularWindowEventListener<Function>>();

@@ -2,14 +2,15 @@ import {ElegularEventListener} from "../../../elegular-event-listener.class";
 import {ElegularWindowEvent} from "../elegular-window-event.enum";
 import BrowserWindow = Electron.BrowserWindow;
 import {StringTooling} from "../../../../tooling/string-tooling.class";
-import {ElegularWindow} from "../../../../window/elegular-window.class";
+import {FileElegularWindow} from "../../../../window/fileMode/file-elegular-window.class";
+import {ElegularWindowBase} from "../../../../window/elegular-winodw-base.class";
 
 export interface IElegularWindowEventListenerConstructor<F extends Function> {
-    new (event: ElegularWindowEvent, elegularWindow: ElegularWindow): ElegularWindowEventListener<F>;
+    new (event: ElegularWindowEvent, elegularWindow: ElegularWindowBase): ElegularWindowEventListener<F>;
 }
 
 export class ElegularWindowEventListener<F extends Function> extends ElegularEventListener<F> {
-    constructor(event: ElegularWindowEvent, private _elegularWindow: ElegularWindow){
+    constructor(event: ElegularWindowEvent, private _elegularWindow: ElegularWindowBase){
         super(event);
     }
 

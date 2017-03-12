@@ -1,6 +1,6 @@
 {
   "name": "elegular",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "The easiest way to use Angular in Electron.",
   "main": "index.js",
   "scripts": {},
@@ -12,7 +12,7 @@
     "@types/fs-promise": "^1.0.1",
     "@types/lodash": "^4.14.52",
     "@types/node": "^7.0.5",
-    "electron": "^1.4.15",
+    "electron": "^1.6.2",
     "fs-promise": "^2.0.0",
     "lodash": "^4.17.4",
     "reflect-metadata": "^0.1.9",

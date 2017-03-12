@@ -1,11 +1,11 @@
-///<reference path="../../node_modules/reflect-metadata/typings.d.ts"/>
+///<reference path="../../../node_modules/reflect-metadata/typings.d.ts"/>
 
 // import * as electron from "electron";
 import * as _ from "lodash";
 import IpcRendererEvent = Electron.IpcRendererEvent;
-import {AngularLoadContext} from "./angular-load-context.class";
+import {AngularLoadContext} from "../angular-load-context.class";
 import Config = SystemJSLoader.Config;
-import {ElegularWindowOptions} from "../angular-options";
+import {ElegularWindowOptions} from "../../angular-options";
 import * as path from "path";
 
 /**
@@ -58,7 +58,7 @@ class ElegularWindowRenderer {
                 }
 
                 if (moduleClass) {
-                    let elegularModuleClass = (await this.loadFileAsync("../service/elegular.module.js")).ElegularModule;
+                    let elegularModuleClass = (await this.loadFileAsync("../../service/elegular.module.js")).ElegularModule;
                     if (moduleDecorator.imports == null) {
                         moduleDecorator.imports = [];
                     }
@@ -66,7 +66,7 @@ class ElegularWindowRenderer {
                     if (moduleDecorator.providers == null) {
                         moduleDecorator.providers = [];
                     }
-                    let elegularWindowRefConstructor = (await this.loadFileAsync("./../service/elegular-window-ref.service.js")).ElegularWindowRef;
+                    let elegularWindowRefConstructor = (await this.loadFileAsync("../../service/elegular-window-ref.service.js")).ElegularWindowRef;
                     moduleDecorator.providers.push({
                         provide: elegularWindowRefConstructor,
                         useValue: new elegularWindowRefConstructor(angularLoadContext.windowId)
@@ -169,10 +169,10 @@ class ElegularWindowRenderer {
     }
 
     private _defaultSystemJsConfig: Config = {
-        baseURL: '../../../',
+        baseURL: '../../../../',
         paths: {
             // paths serve as alias
-            'npm:': '../../../'
+            'npm:': '../../../../'
         },
         // map tells the System loader where to look for things
         map: {

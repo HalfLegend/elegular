@@ -13,7 +13,21 @@ export interface ElegularWindowOptions extends GlobalElegularOptions{
 
 export interface GlobalElegularWindowOptions {
     systemJsConfig?:SystemJsConfig,
-    isProductionMode?:boolean
+    isProductionMode?:boolean,
+    windowServeOptions?: WindowServeOptions
+}
+
+export interface WindowServeOptions{
+    loadMode?: LoadMode,
+    serverMode?: ServerMode
+}
+
+export enum LoadMode{
+    File, Server
+}
+
+export enum ServerMode{
+    JIT,AOT
 }
 
 export interface GlobalElegularOptions extends GlobalElegularWindowOptions {

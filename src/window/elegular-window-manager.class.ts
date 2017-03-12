@@ -1,11 +1,15 @@
 import * as _ from "lodash";
 import * as election from "electron";
-import {ElegularWindow} from "./elegular-window.class";
+import {FileElegularWindow} from "./fileMode/file-elegular-window.class";
 import BrowserWindow = Electron.BrowserWindow;
-import {WindowName, ElegularWindowOptions, GlobalElegularOptions} from "../angular-options";
+import {
+    WindowName, ElegularWindowOptions, WindowServeOptions,
+    LoadMode
+} from "../angular-options";
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 import {ElegularApplication} from "../elegular-application.class";
+import {JitElegularWindow} from "./serverMode/justInTime/jit-elegular-winodow.class";
 
 export class ElegularWindowManager {
     private static _internalGlobalWindowFunctionMap: Map<string, Function> = new Map<string, Function>();
@@ -19,41 +23,37 @@ export class ElegularWindowManager {
         ipcMain.on("##elegular-internal-window-function-sync", callbackSync);
         let callbackAsync = (event: IpcMainEvent, windowIndex: number, functionName: string, messageId: number, ...args) => {
             let result = ElegularWindowManager.callInternalWindowFunction(windowIndex, functionName, ...args);
-
-            if (functionName != "close")
-            {
+            if (functionName != "close") {
                 event.sender.send("##elegular-internal-window-function-async-reply", functionName, messageId, result);
             }
         };
-        ipcMain.on("##elegular-internal-window-function-async",callbackAsync);
+        ipcMain.on("##elegular-internal-window-function-async", callbackAsync);
 
-        ElegularWindowManager._internalGlobalWindowFunctionMap.set("createWindow", (configOrId: ElegularWindowOptions|WindowName)=>{
+        ElegularWindowManager._internalGlobalWindowFunctionMap.set("createWindow", (configOrId: ElegularWindowOptions
+                                                                                        | WindowName) => {
             let elegularWindow = ElegularWindowManager.createWindow(configOrId);
             return elegularWindow.id;
         });
     }
 
-    private static callInternalWindowFunction(windowIndex: number, functionName: string, ...args): any{
+    private static callInternalWindowFunction(windowIndex: number, functionName: string, ...args): any {
         let f: Function = null;
-        if (windowIndex != null)
-        {
+        if (windowIndex != null) {
             let win = ElegularWindowManager.getWindowById(windowIndex);
-            if (win != null)
-            {
+            if (win != null) {
                 f = win[functionName];
                 f = f.bind(win);
             }
         }
-        if (!f)
-        {
+        if (!f) {
             f = ElegularWindowManager._internalGlobalWindowFunctionMap.get(functionName);
         }
         return f(...args);
     }
 
-    private static _windowMap: Map<BrowserWindow, ElegularWindow> = new Map<BrowserWindow, ElegularWindow>();
+    private static _windowMap: Map<BrowserWindow, FileElegularWindow> = new Map<BrowserWindow, FileElegularWindow>();
 
-    public static registerWindow(electronWindow: ElegularWindow) {
+    public static registerWindow(electronWindow: FileElegularWindow) {
         this._windowMap.set(electronWindow.browserWindow, electronWindow);
     }
 
@@ -65,16 +65,16 @@ export class ElegularWindowManager {
         }
     }
 
-    public static getWindowById(windowId: number): ElegularWindow {
+    public static getWindowById(windowId: number): FileElegularWindow {
         return this.getWindowByBrowserWindow(election.BrowserWindow.fromId(windowId));
     }
 
-    public static getWindowByBrowserWindow(browserWindow: BrowserWindow): ElegularWindow {
+    public static getWindowByBrowserWindow(browserWindow: BrowserWindow): FileElegularWindow {
         return this._windowMap.get(browserWindow);
     }
 
-    public static createMainWindow(): Array<ElegularWindow> {
-        let result: Array<ElegularWindow> = [];
+    public static createMainWindow(): Array<FileElegularWindow> {
+        let result: Array<FileElegularWindow> = [];
         for (let config of ElegularWindowManager._angularWindowModuleConfigMap.values()) {
             if (config.isMainWindow) {
                 result.push(ElegularWindowManager.createWindow(config));
@@ -88,21 +88,22 @@ export class ElegularWindowManager {
         //ElegularWindowManager.createMainWindow();
     }
 
-    public static createWindow(configOrId: ElegularWindowOptions|WindowName): ElegularWindow {
-        let angularWindowModuleConfig: ElegularWindowOptions;
+    public static createWindow(configOrId: ElegularWindowOptions | WindowName): FileElegularWindow {
+        let elegularWindowOptions: ElegularWindowOptions;
 
         if (_.isObject(configOrId)) {
-            angularWindowModuleConfig = <ElegularWindowOptions>configOrId;
+            elegularWindowOptions = <ElegularWindowOptions>configOrId;
         }
         else {
-            angularWindowModuleConfig = ElegularWindowManager._angularWindowModuleConfigMap.get(<WindowName>configOrId);
+            elegularWindowOptions = ElegularWindowManager._angularWindowModuleConfigMap.get(<WindowName>configOrId);
         }
 
-        angularWindowModuleConfig = ElegularWindowManager.mergeElegularWindowOptionsWithGlobal(angularWindowModuleConfig);
-        return new ElegularWindow(angularWindowModuleConfig);
+        elegularWindowOptions = ElegularWindowManager.mergeElegularWindowOptionsWithGlobal(elegularWindowOptions);
+        let elegularWindowConstructor = ElegularWindowManager.selectWindow(elegularWindowOptions.windowServeOptions);
+        return new elegularWindowConstructor(elegularWindowOptions);
     }
 
-    private static mergeElegularWindowOptionsWithGlobal(elegularWindowOptions : ElegularWindowOptions): ElegularWindowOptions{
+    private static mergeElegularWindowOptionsWithGlobal(elegularWindowOptions: ElegularWindowOptions): ElegularWindowOptions {
         elegularWindowOptions = _.cloneDeep(elegularWindowOptions);
 
         let globalElegularWindowOptions = ElegularApplication.globalElegularOptions;
@@ -110,4 +111,31 @@ export class ElegularWindowManager {
 
         return elegularWindowOptions;
     }
+
+    private static selectWindow(windowServeOptions: WindowServeOptions): IElegularWindowConstructor {
+        let result: IElegularWindowConstructor;
+        if (!windowServeOptions) {
+            windowServeOptions = {};
+        }
+        if (!windowServeOptions.loadMode) {
+            if (!windowServeOptions.serverMode) {
+                windowServeOptions.loadMode = LoadMode.File;
+            }
+            else {
+                windowServeOptions.loadMode = LoadMode.Server;
+            }
+        }
+
+        if (windowServeOptions.loadMode == LoadMode.Server) {
+            result = JitElegularWindow;
+        }
+        else {
+            result = FileElegularWindow;
+        }
+        return result;
+    }
+}
+
+interface IElegularWindowConstructor {
+    new(elegularWindowOptions: ElegularWindowOptions);
 }
