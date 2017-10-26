@@ -1,4 +1,4 @@
-import * as fs from "fs-promise";
+import * as fs from "fs-extra";
 import {StringTooling} from "../tooling/string-tooling.class";
 import {WindowName} from "../angular-options";
 import {ObjectTooling} from "../tooling/object-tooling.class";

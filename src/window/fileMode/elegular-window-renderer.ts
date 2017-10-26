@@ -2,7 +2,7 @@
 
 // import * as electron from "electron";
 import * as _ from "lodash";
-import IpcRendererEvent = Electron.IpcRendererEvent;
+import IpcRendererEvent = Electron.Event;
 import {AngularLoadContext} from "../angular-load-context.class";
 import Config = SystemJSLoader.Config;
 import {ElegularWindowOptions} from "../../angular-options";
@@ -99,7 +99,7 @@ class ElegularWindowRenderer {
     private isUseSystemJS(): boolean {
         let systemJsConfig = this._angularLoadContext.elegularWindowOptions.systemJsConfig;
         if (!systemJsConfig || systemJsConfig.isUseSystemJS !== false) {
-            if (window.SystemJS) {
+            if (SystemJS) {
                 return true;
             }
         }

@@ -14,5 +14,9 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
+  ],
+  "lib": [
+    "es2016",
+    "dom"
   ]
 }

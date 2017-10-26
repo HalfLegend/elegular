@@ -1,7 +1,7 @@
-import BrowserWindowOptions = Electron.BrowserWindowOptions;
+import BrowserWindowOptions = Electron.BrowserWindowConstructorOptions;
 import * as electron from "electron";
 import BrowserWindow = Electron.BrowserWindow;
-import * as fs from "fs-promise";
+import * as fs from "fs-extra";
 import * as path from "path";
 import {AngularLoadContext} from "../angular-load-context.class";
 import {ElegularWindowOptions} from "../../angular-options";

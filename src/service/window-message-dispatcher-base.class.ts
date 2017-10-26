@@ -1,5 +1,5 @@
 
-import IpcRendererEvent = Electron.IpcRendererEvent;
+import IpcRendererEvent = Electron.Event;
 
 declare type PromiseResolveFunctionType = (value?: any | PromiseLike<any>) => void;
 export abstract class WindowMessageDispatcherBase {

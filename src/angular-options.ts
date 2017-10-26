@@ -1,4 +1,4 @@
-import BrowserWindowOptions = Electron.BrowserWindowOptions;
+import BrowserWindowOptions = Electron.BrowserWindowConstructorOptions;
 import Config = SystemJSLoader.Config;
 export type WindowName = string | number | symbol;
 // These options are loaded at backend.

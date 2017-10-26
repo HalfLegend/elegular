@@ -7,7 +7,7 @@ import {
     LoadMode
 } from "../angular-options";
 import IpcMain = Electron.IpcMain;
-import IpcMainEvent = Electron.IpcMainEvent;
+import IpcMainEvent = Electron.Event;
 import {ElegularApplication} from "../elegular-application.class";
 import {JitElegularWindow} from "./serverMode/justInTime/jit-elegular-winodow.class";
 

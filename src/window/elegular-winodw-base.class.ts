@@ -1,4 +1,4 @@
-import BrowserWindowOptions = Electron.BrowserWindowOptions;
+import BrowserWindowOptions = Electron.BrowserWindowConstructorOptions;
 import BrowserWindow = Electron.BrowserWindow;
 import Size = Electron.Size;
 import Rectangle = Electron.Rectangle;
@@ -562,13 +562,7 @@ export abstract class ElegularWindowBase {
      * If greater than 0, it becomes indeterminate.
      * @param options
      */
-    public setProgressBar(progress: number, options?: {
-                              /**
-                               * Mode for the progress bar.
-                               * Note: This is only implemented on Windows.
-                               */
-                              mode: 'none' | 'normal' | 'indeterminate' | 'error' | 'paused'
-                          }): void {
+    public setProgressBar(progress: number, options?: Electron.ProgressBarOptions): void {
         this.browserWindow.setProgressBar(progress, options);
     }
 
@@ -618,16 +612,16 @@ export abstract class ElegularWindowBase {
      *
      * Note: This API is available only on Windows.
      */
-    public setThumbnailClip(region: Rectangle): boolean {
-        return this.browserWindow.setThumbnailClip(region);
+    public setThumbnailClip(region: Rectangle): void{
+        this.browserWindow.setThumbnailClip(region);
     }
 
     /**
      * Sets the toolTip that is displayed when hovering over the window thumbnail in the taskbar.
      * Note: This API is available only on Windows.
      */
-    public setThumbnailToolTip(toolTip: string): boolean {
-        return this.browserWindow.setThumbnailToolTip(toolTip);
+    public setThumbnailToolTip(toolTip: string): void{
+        this.browserWindow.setThumbnailToolTip(toolTip);
     }
 
     /**

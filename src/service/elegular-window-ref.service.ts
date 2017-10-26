@@ -8,7 +8,6 @@ import Menu = Electron.Menu;
 import ThumbarButton = Electron.ThumbarButton;
 import BrowserWindow = Electron.BrowserWindow;
 import Point = Electron.Point;
-import IpcRendererEvent = Electron.IpcRendererEvent;
 import {WindowMessageDispatcherBase} from "./window-message-dispatcher-base.class";
 
 /**
