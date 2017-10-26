@@ -4,7 +4,7 @@ import {
     ElegularWindowEventListener,
     IElegularWindowEventListenerConstructor
 } from "./elegular-window-event-listener/elegular-window-enent-listener";
-import SwipeDirection = Electron.SwipeDirection;
+// import SwipeDirection = Electron.SwipeDirection;
 import {ElegularWindowBase} from "../../../window/elegular-winodw-base.class";
 export class ElegularWindowEventManager {
     constructor(private _elegularWindow: ElegularWindowBase) {
@@ -206,6 +206,6 @@ export class ElegularWindowEventManager {
      * Note: This is only implemented on macOS.
      */
     public get swipe(): ElegularWindowEventListener<Function> {
-        return this.getEventListener<(event: Event, direction: SwipeDirection) => void>(ElegularWindowEvent.Swipe);
+        return this.getEventListener<(event: Event, direction: string) => void>(ElegularWindowEvent.Swipe);
     }
 }
